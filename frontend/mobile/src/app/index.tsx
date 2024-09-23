@@ -1,12 +1,14 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from '@react-navigation/stack';
-import { HomeScreen } from "../components/home";
-import { DetailsScreen } from "../components/details";
-import { LoginScreen } from "../components/login";
+import { LoginScreen } from "../screens/login";
+import { HomeScreen } from "../screens/home";
+import { MaintenanceScreen } from "../screens/maintenance";
 
 type RootStackParamList = {
-  Home: undefined;
-  Details: {name: string; email: string};
+  Login: {}
+  Home: {}
+  Maintenance: {}
+  Inventory: {}
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -14,9 +16,10 @@ const Stack = createStackNavigator<RootStackParamList>();
 export default function Index() {
   return (
     <NavigationContainer independent={true}>
-      <Stack.Navigator initialRouteName="Home">
+      <Stack.Navigator initialRouteName="Login">
+        <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="Details" component={DetailsScreen} />
+        <Stack.Screen name="Maintenance" component={MaintenanceScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

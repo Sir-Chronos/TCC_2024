@@ -29,7 +29,7 @@ export function LoginScreen({ navigation }: { navigation: any }) {
         />
         <Button
           title="Submit"
-          onPress={() => navigation.navigate('Details', { username, password })}
+          onPress={() => navigation.navigate('Home', { username, password })}
         />
       </View>
     );
