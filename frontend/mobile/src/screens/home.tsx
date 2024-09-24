@@ -5,8 +5,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 // Definindo os tipos das rotas
 type RootStackParamList = {
   Maintenance: undefined; // Mudei de '{}' para 'undefined'
-  Screen2: undefined;
-  Screen3: undefined;
+  Inventory: undefined;
 };
 
 export function HomeScreen() {
@@ -15,7 +14,7 @@ export function HomeScreen() {
 
   const Header = () => (
     <View className="flex-row justify-between items-center p-4 bg-blue-500">
-      <Text className="text-2xl text-white">MyApp</Text>
+      <Text className="text-2xl text-white">AMAN</Text>
       <TouchableOpacity>
         <Image
           source={{ uri: "https://via.placeholder.com/40" }}
@@ -41,9 +40,8 @@ export function HomeScreen() {
 
       {/* Corpo */}
       <View className="flex-1 justify-center items-center p-5">
-        <CustomButton title="Go to Maintenance" screen="Maintenance" />
-        <CustomButton title="Go to Screen 2" screen="Screen2" />
-        <CustomButton title="Go to Screen 3" screen="Screen3" />
+        <CustomButton title="Manutenção" screen="Maintenance" />
+        <CustomButton title="Inventário" screen="Inventory" />
       </View>
     </View>
   );

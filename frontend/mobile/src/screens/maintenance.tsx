@@ -1,35 +1,37 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, ScrollView } from "react-native";
-import DateTimePicker from "@react-native-community/datetimepicker";
+import { View, Text, TextInput, TouchableOpacity, FlatList, ScrollView } from "react-native";
+import { equipesMockadas } from "../mocks/equipes_data";
+import { MaquinasMockadas } from "../mocks/maquinas_data";
 
 export function MaintenanceScreen() {
   const [maintenanceType, setMaintenanceType] = useState("");
-  const [responsibleTeam, setResponsibleTeam] = useState("");
-  const [date, setDate] = useState(new Date());
-  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [startDate, setStartDate] = useState(""); // Data de início
   const [status, setStatus] = useState("");
   const [usedMaterials, setUsedMaterials] = useState("");
+  const [selectedTeam, setSelectedTeam] = useState<number | null>(null);
+  const [selectedMachine, setSelectedMachine] = useState<number | null>(null);
+  const [isTeamDropdownVisible, setIsTeamDropdownVisible] = useState(false);
+  const [isMachineDropdownVisible, setIsMachineDropdownVisible] = useState(false);
 
-  const handleDateChange = (event: any, selectedDate?: Date) => {
-    const currentDate = selectedDate || date;
-    setShowDatePicker(false);
-    setDate(currentDate);
-  };
+  // Filtrar equipes ativas
+  const activeTeams = equipesMockadas.filter((equipe) => equipe.status === "ativo");
 
   const handleSubmit = () => {
     // Função para cadastrar manutenção
     console.log({
       maintenanceType,
-      responsibleTeam,
-      date,
+      selectedTeam,
+      selectedMachine,
+      startDate, // Data de início incluída
       status,
       usedMaterials,
     });
   };
 
   return (
-    <ScrollView className="flex-1 p-5 bg-gray-100">
-      <Text className="text-2xl font-bold mb-5">Register Maintenance</Text>
+    <ScrollView className="p-5">
+      {/* Cadastro de nova manutenção */}
+      <Text className="text-2xl font-bold mb-5">Register New Maintenance</Text>
 
       {/* Campo: Tipo de Manutenção */}
       <Text className="text-lg mb-2">Maintenance Type:</Text>
@@ -40,33 +42,80 @@ export function MaintenanceScreen() {
         onChangeText={setMaintenanceType}
       />
 
-      {/* Campo: Equipe Responsável */}
-      <Text className="text-lg mb-2">Responsible Team:</Text>
+      {/* Campo: Data de Início */}
+      <Text className="text-lg mb-2">Start Date:</Text>
       <TextInput
         className="border border-gray-300 p-3 rounded mb-5"
-        placeholder="Enter the responsible team"
-        value={responsibleTeam}
-        onChangeText={setResponsibleTeam}
+        placeholder="Enter the start date"
+        value={startDate}
+        onChangeText={setStartDate}
       />
-
-      {/* Campo: Data e Hora */}
-      <Text className="text-lg mb-2">Date and Time:</Text>
+            {/* Seletor de Equipes */}
+            <Text className="text-lg mb-2">Select Responsible Team:</Text>
       <TouchableOpacity
         className="border border-gray-300 p-3 rounded mb-5"
-        onPress={() => setShowDatePicker(true)}
+        onPress={() => setIsTeamDropdownVisible(!isTeamDropdownVisible)}
       >
-        <Text>{date.toLocaleString()}</Text>
+        <Text>{selectedTeam ? `Selected Team: ${selectedTeam}` : "Select a team"}</Text>
       </TouchableOpacity>
-      {showDatePicker && (
-        <DateTimePicker
-          value={date}
-          mode="datetime"
-          display="default"
-          onChange={handleDateChange}
-        />
+      {isTeamDropdownVisible && (
+        <View style={{ maxHeight: 150 }}>
+          <FlatList
+            data={activeTeams}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                className="p-4 border-b border-gray-200"
+                onPress={() => {
+                  setSelectedTeam(item.id);
+                  setIsTeamDropdownVisible(false); // Esconder lista após a seleção
+                }}
+              >
+                <Text className="font-bold">Equipe {item.id}</Text>
+                {item.integrantes.map((integrante, index) => (
+                  <Text key={index}>
+                    {integrante.nome} - {integrante.cargo}
+                  </Text>
+                ))}
+              </TouchableOpacity>
+            )}
+          />
+        </View>
       )}
 
-      {/* Atualizar Manutenção: Status */}
+      {/* Seletor de Máquinas */}
+      <Text className="text-lg mb-2">Select Machine:</Text>
+      <TouchableOpacity
+        className="border border-gray-300 p-3 rounded mb-5"
+        onPress={() => setIsMachineDropdownVisible(!isMachineDropdownVisible)}
+      >
+        <Text>{selectedMachine ? `Selected Machine: ${selectedMachine}` : "Select a machine"}</Text>
+      </TouchableOpacity>
+      {isMachineDropdownVisible && (
+        <View style={{ maxHeight: 150 }}>
+          <FlatList
+            data={MaquinasMockadas}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                className="p-4 border-b border-gray-200"
+                onPress={() => {
+                  setSelectedMachine(item.id);
+                  setIsMachineDropdownVisible(false); // Esconder lista após a seleção
+                }}
+              >
+                <Text className="font-bold">
+                  {item.nome} ({item.tipo})
+                </Text>
+                <Text>Local: {item.local}</Text>
+                <Text>Status: {item.status}</Text>
+              </TouchableOpacity>
+            )}
+          />
+        </View>
+      )}
+      
+      {/* Atualizar Manutenção Existente */}
       <Text className="text-2xl font-bold mb-5">Update Maintenance</Text>
       <Text className="text-lg mb-2">Maintenance Status:</Text>
       <TextInput
@@ -75,6 +124,8 @@ export function MaintenanceScreen() {
         value={status}
         onChangeText={setStatus}
       />
+
+
 
       {/* Atualizar Manutenção: Materiais Usados */}
       <Text className="text-lg mb-2">Used Materials:</Text>
@@ -85,11 +136,10 @@ export function MaintenanceScreen() {
         onChangeText={setUsedMaterials}
       />
 
+
+
       {/* Botão de Submit */}
-      <TouchableOpacity
-        className="bg-blue-500 p-4 rounded"
-        onPress={handleSubmit}
-      >
+      <TouchableOpacity className="bg-blue-500 p-4 rounded m-5" onPress={handleSubmit}>
         <Text className="text-white text-center">Submit</Text>
       </TouchableOpacity>
     </ScrollView>

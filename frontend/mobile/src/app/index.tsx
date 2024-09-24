@@ -3,6 +3,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { LoginScreen } from "../screens/login";
 import { HomeScreen } from "../screens/home";
 import { MaintenanceScreen } from "../screens/maintenance";
+import { InventoryScreen } from "../screens/inventory";
 
 type RootStackParamList = {
   Login: {}
@@ -20,6 +21,7 @@ export default function Index() {
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="Maintenance" component={MaintenanceScreen} />
+        <Stack.Screen name="Inventory" component={InventoryScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
